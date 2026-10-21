@@ -1,0 +1,178 @@
+MEDICAL RESEARCH BRIEFING — CHAT HISTORY
+Project folder: C:\Users\sunil\Desktop\new_Project
+Date: 2026-10-21
+
+User prompts are recorded verbatim. Assistant responses are summarized
+(tool calls and full outputs are condensed).
+
+==============================================================================
+PROMPT 1
+==============================================================================
+I am working on a healthcare strategy team enters a medical condition and receives a structured research briefing covering currenet standard of care , emerging treatments in development
+
+first lets build the core compoements and the techologies
+Local streamlit application
+python
+use MCP
+OpenAI sdk
+
+analise the folder strture and lets have a modular and lets follwo the KISS principle and seperation of concerns
+
+------------------------------------------------------------------------------
+RESPONSE 1 (summary)
+------------------------------------------------------------------------------
+- Analysed the folder: empty folders LLM/, retrieveal/, tools/ and an
+  ARCHITECTURE.md describing a different design (Claude, FastAPI, ChromaDB).
+- Renamed folders to Python package names: LLM -> llm, retrieveal -> retrieval;
+  added core/. Created .venv and installed streamlit, openai (3.36), mcp (2.3),
+  httpx, pydantic, python-dotenv. Noted mcp 2.x renamed FastMCP to MCPServer.
+- Built first version:
+    app.py                 Streamlit UI
+    core/config.py, core/schemas.py, core/briefing.py, core/report.py
+    llm/client.py, llm/prompts.py
+    retrieval/mcp_client.py
+    tools/server.py + pubmed.py, openfda.py, clinical_trials.py
+- Verified live: PubMed, openFDA, ClinicalTrials.gov return data; MCP round trip
+  over stdio works; pipeline works with a stubbed OpenAI client; Streamlit boots.
+- Wrote README.md. Flagged that ARCHITECTURE.md conflicts with the new design.
+
+==============================================================================
+PROMPT 2
+==============================================================================
+now lets build the healthcare application end to end -
+wire up all the compoenents that we build - steamlit - open ai - MCP
+i will provide the open ai key in teh .env
+retrive the medical publication from the pubmed and clinical trails and check teh information from the authoritative healthcare sources
+create a seperate research functions for standasrd of care , emerging treatments adn companies or research institutions
+combine them into one structured breifing.
+Display the executive summary , current standard if care , emerging treatmemts and trails
+
+incuklude tloading indicators , error handling m markdown m dont invent medical facts or trail records or citations
+create the project files and trhe readme file
+give importatnce to end to end executaion rather than extra features
+also check for any wiring issues and list them and fix
+
+------------------------------------------------------------------------------
+RESPONSE 2 (summary)
+------------------------------------------------------------------------------
+- Redesigned for reliability: Python decides what to retrieve (fixed MCP tool
+  calls); OpenAI only writes structured sections; Python verifies citations.
+- Added research/ with three functions: standard_of_care.py, emerging.py,
+  organizations.py (+ common.py). Added core/citations.py (ID normalization and
+  verification). Pipeline: normalize condition -> 3 research functions in
+  parallel -> executive summary -> verified Briefing.
+- Anti-fabrication: every PMID / NCT / FDA ID checked against records retrieved
+  in that run; unverifiable IDs and unsupported treatments removed and listed as
+  data-quality notes; trial phase/sponsor/status and tables come from APIs.
+- UI: live progress (st.status), tabs (Executive summary, Standard of care,
+  Emerging treatments & trials, Companies & institutions, References),
+  Markdown/JSON download, friendly errors.
+- Wiring issues found and fixed (14): exception groups unreadable; tool errors
+  hidden; text results JSON-escaped; no MCP timeout; .env read once / cwd
+  dependent; off-topic PubMed results (now guidelines first); invalid trial
+  phases; unsanitized search terms; one failing source failed everything; no
+  retry on rate limits; stale briefing under new error; temperature breaks
+  reasoning models; Markdown table/ID-linking bugs; tools/http.py shadowed the
+  stdlib http module (renamed http_client.py).
+- Verified with Streamlit AppTest + real MCP + live APIs (stubbed OpenAI);
+  invented IDs removed; error paths checked. README rewritten.
+
+==============================================================================
+PROMPT 3
+==============================================================================
+Lets test this application with non - small cell lung cancer
+confirm the clinical trails id and status and match the retrived registry records and establishment treatments are distinguisged from investigational trementemsn
+
+it need to handle the empty results and api failures and timeouts and missing cred and never fabricate the successfull results ad run the tests and fix the issues that would prevent a application startup and application execution
+
+verify the components created , the wiring , the validation using teh deterministic python + llm systhesis
+
+------------------------------------------------------------------------------
+RESPONSE 3 (summary)
+------------------------------------------------------------------------------
+- No .env / OpenAI key present, so the LLM step was stubbed; everything else ran
+  for real.
+- Fixes:
+  * MCP timeout raised MCPError (crashed briefing) -> now a ToolError / source
+    failure.
+  * Source failures tracked separately from "nothing found"; if all sources are
+    down, no briefing is produced; partial briefings show a visible banner.
+  * FDA excerpt was first 500 chars (cut off trametinib's NSCLC indication) ->
+    excerpt now taken around the condition mention.
+  * Executive summary key points must cite at least one verified ID.
+  * Emerging treatments containing an FDA-labelled drug for the condition are
+    labelled "New use/combination of FDA-labelled ..."; standard of care can cite
+    only PMID/FDA, emerging only NCT IDs.
+- Added tests/ (pytest): test_citations, test_research, test_briefing,
+  test_report, test_app (incl. real Streamlit server startup), test_live_nsclc.
+- Results: 41 passed (36 offline, 5 live).
+  NSCLC live: 30/30 Phase 2/3 trials matched registry records by NCT ID
+  (title, status, phases, lead sponsor); 8 PubMed guideline records (NCCN
+  2024-2026, ASCO stage IV, SITC); 20 FDA-labelled drugs; all planted
+  fabrications removed.
+- README updated with tests and failure-handling table.
+
+==============================================================================
+PROMPT 4
+==============================================================================
+Lets have a detailed PPT
+
+Inlcude the core compoents
+working principles
+
+start the PPT with introduction about the project
+what are the objectives
+what was implemented
+what was tested
+
+so cretae a professional PPT including the problem statemnt m solution , arch, data sources m research points , python and streamlit implementations, deterministic checks , llm systhemsys,final research breifing , testing
+
+------------------------------------------------------------------------------
+RESPONSE 4 (summary)
+------------------------------------------------------------------------------
+- Built a 22-slide deck (Slides artifact, exportable to .pptx/PDF):
+  https://claude.ai/artifact/S6QvCZqdN32aGoAaYZ4xvA
+  Sections: introduction, problem, objectives, solution, architecture, working
+  principles, core components, data sources, research functions, MCP layer,
+  Python/Streamlit implementation, deterministic checks, LLM synthesis,
+  established vs investigational, final briefing, failure handling, testing,
+  NSCLC validation, issues fixed, limitations/next steps, summary.
+- Speaker notes on every slide. Corrected one figure: 5/5 planted violations
+  removed (they produced 7 data-quality notes).
+
+==============================================================================
+PROMPT 5
+==============================================================================
+Lets customise this PPT in the range of 2-5 slides
+make sure that we include all teh info
+make sure This slides are inteneted to explain to non technical stake holders
+
+------------------------------------------------------------------------------
+RESPONSE 5 (summary)
+------------------------------------------------------------------------------
+- Condensed the same deck to 5 plain-language slides (22-slide version kept in
+  version history):
+    1. Medical Research Briefing - what it does, the problem, goals
+    2. Gather, draft, then fact-check - how it works, sources, briefing contents
+    3. Built so that nothing is made up - six safeguards
+    4. Tested on a real lung cancer case - 41 / 30/30 / 5/5 / 20
+    5. Where we are and what comes next - ready now, still to confirm, next steps
+- Jargon removed; speaker notes rewritten for non-technical stakeholders.
+
+==============================================================================
+PROMPT 6
+==============================================================================
+save the chathistory and teh prompts in the chat_history.txt
+
+------------------------------------------------------------------------------
+RESPONSE 6 (summary)
+------------------------------------------------------------------------------
+- Saved this file.
+
+==============================================================================
+OPEN ITEMS
+==============================================================================
+- Add OPENAI_API_KEY to .env and run the NSCLC briefing end to end with the real
+  model (not yet done; tests used a stub for the LLM step).
+- ARCHITECTURE.md is no longer in the folder; README.md documents the design.
+- Deck link is private until shared from the Share menu.
