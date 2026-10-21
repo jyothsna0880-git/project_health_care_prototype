@@ -1,0 +1,7 @@
+streamlit>=1.66
+openai>=3.36
+mcp>=2.3
+httpx>=0.28
+pydantic>=2.14
+python-dotenv>=1.2
+pytest>=8
